@@ -1,7 +1,8 @@
 import os
 from flask import Flask
+from dotenv import load_dotenv
 from .config import DevelopmentConfig, ProductionConfig, TestingConfig
-from .extensions import db, jwt, cors, mail, restx_api, socketio
+from .extensions import db, jwt, cors, mail, restx_api, socketio, migrate
 
 CONFIG_MAP = {
     'development': DevelopmentConfig,
@@ -14,6 +15,9 @@ def create_app(config_name: str | None = None) -> Flask:
     """Application factory for the Procurement Workflow Management System."""
     app = Flask(__name__)
 
+    # Load environment variables from .env if present
+    load_dotenv()
+
     env_name = config_name or os.getenv('FLASK_CONFIG', 'development').lower()
     app.config.from_object(CONFIG_MAP.get(env_name, DevelopmentConfig))
 
@@ -23,6 +27,7 @@ def create_app(config_name: str | None = None) -> Flask:
     cors.init_app(app)
     mail.init_app(app)
     restx_api.init_app(app)
+    migrate.init_app(app, db)
 
     # Register API namespaces
     from .api.v1.docs import health_ns, requests_ns, workflow_ns, auth_ns, documents_ns

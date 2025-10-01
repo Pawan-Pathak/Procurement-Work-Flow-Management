@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_mail import Mail
 from flask_restx import Api
 from flask_socketio import SocketIO
+from flask_migrate import Migrate
 
 
 db = SQLAlchemy()
@@ -18,3 +19,4 @@ restx_api = Api(
     prefix='/api/v1',
 )
 socketio = SocketIO(async_mode='threading', cors_allowed_origins='*')
+migrate = Migrate()
